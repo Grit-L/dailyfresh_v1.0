@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -68,7 +68,7 @@ class RegisterView(View):
         # 异步发送邮件
         send_register_active_email.delay(email, username, token)
         # 返回应答,跳转到index
-        return redirect(reverse('goods:index'))
+        return redirect(reverse('user:login'))
 
 
 class ActiveView(View):
@@ -95,7 +95,13 @@ class LoginView(View):
     登录视图
     """
     def get(self, request):
-        return render(request, 'login.html')
+        if 'username' in request.COOKIES:
+            username = request.COOKIES.get('username')
+            checked = 'checked'
+        else:
+            username = ''
+            checked = ''
+        return render(request, 'login.html', {'username': username, 'checked': checked})
 
     def post(self, request):
         # 获取数据
@@ -108,9 +114,11 @@ class LoginView(View):
 
         # 登录校验 业务处理
         user = authenticate(username=username, password=password)
+        print(user)
         if user is not None:
             # 判断用户是否激活
             if user.is_active:
+                # 记录登陆状态 session
                 login(request, user)
                 # 登录后跳转
                 next_url = request.GET.get('next', reverse('goods:index'))
@@ -122,7 +130,18 @@ class LoginView(View):
                     response.set_cookie('username', username, max_age=24 * 3600)
                 else:
                     response.delete_cookie(username)
+                return response
             else:
-                return HttpResponse(request, 'login.html', {'errmsg': '账户未激活'})
+                return render(request, 'login.html', {'errmsg': '账户未激活'})
         else:
             return render(request, 'login.html', {'errmsg': '用户名或密码错误'})
+
+
+class LogoutView(View):
+    """
+    退出视图
+    """
+    def get(self, request):
+        # 删除session
+        logout(request)
+        return redirect(reverse('goods:index'))
