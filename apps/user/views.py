@@ -8,6 +8,7 @@ from itsdangerous import SignatureExpired
 import re
 
 from user.models import User
+from utils.mixin import LoginRequiredMixin
 from celery_tasks.tasks import send_register_active_email
 from dailyfresh import settings
 
@@ -121,6 +122,7 @@ class LoginView(View):
                 # 记录登陆状态 session
                 login(request, user)
                 # 登录后跳转
+                # 从哪个页面退出，登录后就进入哪个页面。若next为none 默认进入后面那个页面
                 next_url = request.GET.get('next', reverse('goods:index'))
                 response = redirect(next_url)
 
@@ -145,3 +147,18 @@ class LogoutView(View):
         # 删除session
         logout(request)
         return redirect(reverse('goods:index'))
+
+
+class UserInfoView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'user_center_info.html', {'page': 'user'})
+
+
+class UserOrderView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'user_center_order.html', {'page': 'order'})
+
+
+class UserAddressView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'user_center_site.html', {'page': 'address'})
