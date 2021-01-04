@@ -14,4 +14,9 @@
 mysql、redis做缓存、celery异步处理、fastdfs分布式文件存储
 Haystack全文检索框架、Whoosh搜索引擎
 
-后续添加调用支付宝支付功能、代码部署步骤
+
+
+### 项目需修改配置地方
+
+settings 中的地址、celery下task的redis地址、fdfs_client.conf中的地址
+

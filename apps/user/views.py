@@ -202,6 +202,8 @@ class UserOrderView(LoginRequiredMixin, View):
 		# 获取订单数据
 		orders = OrderInfo.objects.filter(user=user).order_by('-create_time')
 
+		if not page:
+			return redirect(reverse('user:user'))
 		# 获取订单商品数据
 		for order in orders:
 			order_skus = OrderGoods.objects.filter(order_id=order.order_id)

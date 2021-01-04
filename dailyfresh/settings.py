@@ -156,7 +156,7 @@ TINYMCE_DEFAULT_CONFIG = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://*.*.*.*:6379/*",
+        "LOCATION": "redis://*.*.*.*:6379/2",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -200,6 +200,13 @@ HAYSTACK_CONNECTIONS = {
 
 # 当添加、修改、删除数据时，自动生成索引
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
-
 # 指定搜索结果每页显示的条数
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 2
+
+
+# 支付宝appid
+ALIPAY_APP_ID = ''
+# 用户私钥
+APP_PRIVATE_KEY_PATH = os.path.join(BASE_DIR, 'apps/order/app_private_key.pem')
+# 支付宝公钥
+ALIPAY_PUBLIC_KEY_PATH = os.path.join(BASE_DIR, 'apps/order/alipay_public_key.pem')
